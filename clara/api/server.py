@@ -72,6 +72,7 @@ class UniversalImportRequest(BaseModel):
 ZenodoImportRequest = UniversalImportRequest
 
 @app.get("/", response_class=HTMLResponse)
+@app.get("/app", response_class=HTMLResponse)
 async def serve_index():
     index_file = WEB_DIR / "templates" / "index.html"
     if index_file.exists():
