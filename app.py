@@ -1,4 +1,27 @@
 import os
+import sys
+
+# Ensure backward compatibility for Gradio 4 with newer huggingface_hub
+try:
+    import huggingface_hub
+    if not hasattr(huggingface_hub, "HfFolder"):
+        class HfFolder:
+            @classmethod
+            def get_token(cls):
+                try:
+                    return huggingface_hub.get_token()
+                except Exception:
+                    return None
+            @classmethod
+            def save_token(cls, token):
+                pass
+            @classmethod
+            def delete_token(cls):
+                pass
+        huggingface_hub.HfFolder = HfFolder
+except Exception:
+    pass
+
 os.environ["GRADIO_SSR_MODE"] = "False"
 
 import uvicorn
