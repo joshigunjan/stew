@@ -19,8 +19,8 @@ class ClaraConfig(BaseModel):
     offline_mode: bool = False
     
     # Server configuration
-    host: str = os.getenv("CLARA_HOST", "127.0.0.1")
-    port: int = int(os.getenv("CLARA_PORT", "8000"))
+    host: str = os.getenv("CLARA_HOST", "0.0.0.0")
+    port: int = int(os.getenv("PORT", os.getenv("CLARA_PORT", "8000")))
     
     # Storage
     storage_dir: Path = STORAGE_DIR

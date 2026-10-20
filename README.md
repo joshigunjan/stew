@@ -1,3 +1,14 @@
+---
+title: Stew - The Helmholtz AI Data Steward
+emoji: 🍲
+colorFrom: green
+colorTo: yellow
+sdk: docker
+app_port: 7860
+pinned: false
+license: apache-2.0
+---
+
 # 🍲 Stew: The Helmholtz AI Data Steward
 ### Sovereign FAIR² & MLCommons Croissant Research Data Management for the Helmholtz Association
 

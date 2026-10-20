@@ -1,13 +1,12 @@
-# Stew: The Helmholtz Data Steward Container
+# Stew: The Helmholtz AI Data Steward
+# Compatible with Hugging Face Spaces (port 7860, user 1000) & Helmholtz Cloud (port 8000)
 FROM python:3.12-slim
 
 WORKDIR /app
 
-# Prevent Python from writing .pyc files to disk and buffering stdout/stderr
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PORT=8000 \
-    HOST=0.0.0.0
+    PORT=7860
 
 # Install minimal OS dependencies for scientific libraries
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -15,21 +14,25 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python requirements
-COPY requirements.txt .
+# Set up user with UID 1000 (Required for Hugging Face Spaces non-root execution)
+RUN useradd -m -u 1000 user && \
+    mkdir -p /app/data_store && \
+    chown -R user:user /app
+
+COPY --chown=user:user requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copy source code and assets
-COPY . .
+COPY --chown=user:user . .
 
-# Ensure storage directory exists
-RUN mkdir -p /app/data_store
+USER user
+ENV HOME=/home/user \
+    PATH=/home/user/.local/bin:$PATH
 
-EXPOSE 8000
+EXPOSE 7860
 
 # Healthcheck endpoint
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8000/api/status || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:${PORT}/api/status || exit 1
 
-CMD ["uvicorn", "clara.api.server:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn clara.api.server:app --host 0.0.0.0 --port ${PORT:-7860}"]
