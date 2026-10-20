@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  stew:
+    build: .
+    image: stew-data-steward:latest
+    container_name: stew_app
+    ports:
+      - "8000:8000"
+    environment:
+      - BLABLADOR_API_KEY=${BLABLADOR_API_KEY:-}
+      - BLABLADOR_BASE_URL=https://api.helmholtz-blablador.fz-juelich.de/v1
+      - BLABLADOR_MODEL=${BLABLADOR_MODEL:-alias-fast}
+      - STORAGE_DIR=/app/data_store
+    volumes:
+      - stew_storage:/app/data_store
+    restart: unless-stopped
+
+volumes:
+  stew_storage:
