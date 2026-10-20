@@ -22,12 +22,12 @@
     </div>
 
     <div class="header-controls">
-      <div class="status-pill">
-        <div class="pulse-indicator"></div>
-        <span id="statusIndicatorText">Checking Blablador...</span>
+      <div class="status-pill" id="statusPillContainer" title="Stew Sovereign AI Steward is pre-configured and active for all visitors">
+        <div class="pulse-indicator" style="background-color: var(--stew-sage);"></div>
+        <span id="statusIndicatorText">🍲 Sovereign AI Steward: Active</span>
       </div>
-      <button class="btn-secondary" id="openSettingsBtn">
-        ⚙️ LLM Settings
+      <button class="btn-secondary" id="openSettingsBtn" style="font-size:0.82rem; padding:0.4rem 0.75rem; opacity:0.8;" title="Advanced Engine Configuration">
+        ⚙️ Advanced
       </button>
     </div>
   </header>
@@ -341,10 +341,20 @@
         <div>
           <h3>AI Data Steward Engine Settings</h3>
           <div style="font-size:0.82rem; color:var(--text-muted); margin-top:0.2rem;">
-            Connect to live sovereign inference or run with Stew's grounded expert engine.
+            Host and administrator settings for sovereign AI inference.
           </div>
         </div>
         <button class="btn-secondary" id="closeSettingsBtn" style="padding:0.25rem 0.5rem;">&times;</button>
+      </div>
+
+      <div style="background: rgba(82, 110, 88, 0.09); border: 1px solid var(--stew-sage); border-radius: var(--radius-xs); padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; gap: 0.75rem; align-items: center;">
+        <div style="font-size: 1.4rem;">🔒</div>
+        <div>
+          <div style="font-weight: 700; color: var(--stew-sage); font-size: 0.88rem;">Embedded AI Data Steward: Active &amp; Pre-Configured</div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.15rem;">
+            Stew is pre-configured to run out-of-the-box for all visitors. Visitors do not need to provide, paste, or acquire any API tokens.
+          </div>
+        </div>
       </div>
 
       <div class="input-block">

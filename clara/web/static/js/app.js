@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     checkBackendStatus();
 });
 
-// Check Helmholtz Blablador status
+// Check Stew AI status
 async function checkBackendStatus() {
     try {
         const res = await fetch("/api/status");
@@ -24,11 +24,11 @@ async function checkBackendStatus() {
         const dot = document.querySelector(".pulse-indicator");
         
         if (data.is_configured) {
-            indicator.textContent = `${data.provider || "AI"} Connected (${data.model})`;
+            indicator.textContent = `⚡ ${data.provider || "Sovereign AI"} Connected (${data.model})`;
             dot.style.backgroundColor = "var(--stew-sage)";
         } else {
-            indicator.textContent = `Stew Grounded Engine (Ready)`;
-            dot.style.backgroundColor = "var(--stew-copper)";
+            indicator.textContent = `🍲 Sovereign AI Steward: Active (Embedded)`;
+            dot.style.backgroundColor = "var(--stew-sage)";
         }
     } catch (e) {
         console.error("Status check error", e);

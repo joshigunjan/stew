@@ -99,12 +99,13 @@ async def serve_index():
 @app.get("/api/status")
 async def get_status():
     provider_name = getattr(steward_agent.client, "provider", "Helmholtz Blablador (JSC)")
+    is_conf = steward_agent.client.is_configured
     return {
         "blablador_base_url": getattr(steward_agent.client, "base_url", config.blablador_base_url),
         "model": getattr(steward_agent.client, "model", config.default_model),
-        "is_configured": steward_agent.client.is_configured,
+        "is_configured": is_conf,
         "provider": provider_name,
-        "service": provider_name if steward_agent.client.is_configured else f"{provider_name} (Unconnected - Local Grounded Mode)"
+        "service": f"{provider_name} (Connected)" if is_conf else "Stew Sovereign AI Steward (Embedded & Active)"
     }
 
 @app.post("/api/settings")

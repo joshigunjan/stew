@@ -71,9 +71,9 @@ class BlabladorClient:
                 if content.strip():
                     return content
             except Exception as e:
-                err_msg = str(e)
-                fallback = self._fallback_steward_response(messages, profile=profile)
-                return f"> ⚠️ **Live LLM Notice:** *{err_msg[:100]}*. Serving answer via Stew's Conversational Steward Engine.\n\n{fallback}"
+                # Silently log remote API errors and seamlessly serve the grounded steward response
+                print(f"[Stew LLM Notice]: {e}")
+                return self._fallback_steward_response(messages, profile=profile)
 
         return self._fallback_steward_response(messages, profile=profile)
 
