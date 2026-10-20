@@ -1047,3 +1047,308 @@ body {
   0% { transform: scale(0.95) rotate(-2deg); }
   100% { transform: scale(1.05) rotate(2deg); }
 }
+
+/* Domain Standards Banner */
+.domain-standards-banner {
+  background: var(--stew-sage-soft);
+  border: 1px solid rgba(45, 106, 79, 0.25);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.4rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.domain-badge-lead {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--stew-sage);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.domain-checks-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.domain-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  background: #ffffff;
+  border: 1px solid rgba(45, 106, 79, 0.25);
+  border-radius: var(--radius-full);
+  color: var(--stew-sage);
+}
+
+.domain-pill.pill-warning {
+  border-color: rgba(217, 119, 6, 0.3);
+  color: var(--stew-amber);
+  background: var(--stew-amber-soft);
+}
+
+/* Independent Verifiable Validation Components */
+.validation-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--stew-sage-soft);
+  color: var(--stew-sage);
+  border: 1px solid rgba(45, 106, 79, 0.3);
+}
+
+.validation-badge-pill.status-warning {
+  background: var(--stew-amber-soft);
+  color: #92400e;
+  border-color: rgba(217, 119, 6, 0.3);
+}
+
+.validation-badge-pill.status-error {
+  background: var(--stew-berry-soft);
+  color: var(--stew-berry);
+  border-color: rgba(159, 18, 57, 0.3);
+}
+
+.validation-details-box {
+  background: var(--bg-warm-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.validation-checks-header {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+}
+
+.validation-checks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 0.5rem;
+}
+
+.validation-check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--text-main);
+  background: #ffffff;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-subtle);
+}
+
+.validation-check-item.item-error {
+  background: #fff1f2;
+  border-color: #fecdd3;
+  color: #9f1239;
+}
+
+.validation-check-item.item-warning {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #92400e;
+}
+
+/* Provenance Tags & Uncertainty */
+.col-provenance-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--border-subtle);
+}
+
+.badge-provenance {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-full);
+}
+
+.badge-provenance.prov-extracted {
+  background: var(--stew-sage-soft);
+  color: var(--stew-sage);
+  border: 1px solid rgba(45, 106, 79, 0.25);
+}
+
+.badge-provenance.prov-inferred {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.badge-provenance.prov-ai {
+  background: #faf5ff;
+  color: #6b21a8;
+  border: 1px solid rgba(168, 85, 247, 0.25);
+}
+
+.badge-provenance.prov-verified {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #16a34a;
+}
+
+.confidence-indicator {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.btn-verify-col {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--stew-copper);
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 0.25rem 0.55rem;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-verify-col:hover {
+  background: var(--stew-copper-soft);
+  border-color: var(--stew-copper);
+}
+
+.modal-provenance-info {
+  background: var(--bg-warm-tint);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* 1-Click Deposition Cockpit */
+.deposit-action-card {
+  background: #ffffff;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.deposit-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.deposit-icon {
+  font-size: 2rem;
+  background: var(--stew-copper-soft);
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(194, 94, 26, 0.2);
+}
+
+.deposit-title {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.35rem;
+}
+
+.deposit-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.deposit-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 900px) {
+  .deposit-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ephemeral-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: var(--stew-sage-soft);
+  color: var(--stew-sage);
+  border: 1px solid rgba(45, 106, 79, 0.25);
+  border-radius: var(--radius-full);
+  padding: 0.15rem 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.deposit-privacy-notice {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  background: var(--bg-warm-tint);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xs);
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.deposit-result-box {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: var(--radius-sm);
+  padding: 1.25rem 1.5rem;
+  margin-top: 1rem;
+}
+
+.deposit-result-box h4 {
+  font-family: var(--font-serif);
+  color: #15803d;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.deposit-result-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0;
+  font-size: 0.88rem;
+}
+
+.deposit-result-row strong {
+  color: var(--text-main);
+}
+

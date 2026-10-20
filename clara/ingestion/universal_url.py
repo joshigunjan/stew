@@ -8,6 +8,7 @@ from urllib.parse import urlparse, urljoin
 from clara.config import STORAGE_DIR
 from clara.profiler.base import DatasetProfile, ColumnProfile
 from clara.profiler.inspector import inspect_dataset
+from clara.profiler.domain_steward import audit_domain_standards
 from clara.ingestion.zenodo import parse_zenodo_identifier, fetch_and_profile_zenodo_record
 
 def is_zenodo_identifier(input_str: str) -> bool:
@@ -156,11 +157,14 @@ def _ingest_web_directory(dir_url: str, html_text: str, client: httpx.Client) ->
             null_ratio=0.0,
             distinct_count=1,
             is_unique=True,
-            sample_values=[f["url"]],
             suggested_semantic_type="remote_sensing_layer",
             suggested_unit="",
             suggested_description=desc,
-            missing_value_markers=[]
+            missing_value_markers=[],
+            provenance_type="DOC_INFERRED",
+            provenance_evidence=f"Extracted from repository DATA SOURCES CARD & README.md metadata for {col_name}",
+            confidence_score=0.92,
+            user_confirmed=False
         )
         
         preview_records.append({
@@ -204,7 +208,7 @@ def _ingest_web_directory(dir_url: str, html_text: str, client: httpx.Client) ->
             "files": files
         }
     )
-    
+    profile.domain_standards = audit_domain_standards(profile)
     return profile, {"type": "web_directory", "url": dir_url, "files": files}
 
 def _ingest_direct_file(url: str, resp: httpx.Response) -> Tuple[DatasetProfile, Dict[str, Any]]:

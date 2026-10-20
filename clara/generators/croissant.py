@@ -88,6 +88,13 @@ def generate_croissant_metadata(profile: DatasetProfile) -> Dict[str, Any]:
         if col.missing_value_markers:
             field_obj["rai:missingValueIndicator"] = col.missing_value_markers
             
+        # Explicit provenance & confidence (ChatGPT Recommendation 3)
+        field_obj["cr:provenance"] = col.provenance_type
+        field_obj["cr:confidenceScore"] = col.confidence_score
+        field_obj["cr:provenanceEvidence"] = col.provenance_evidence
+        if col.user_confirmed:
+            field_obj["cr:userConfirmed"] = True
+            
         fields.append(field_obj)
 
     # Build distribution (single file or collection)

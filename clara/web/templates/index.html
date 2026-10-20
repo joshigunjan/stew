@@ -172,6 +172,11 @@
 
       <!-- VIEW 1: Data Explorer -->
       <div class="tab-view-panel active" id="view-explorer">
+        <div id="domainStandardsBar" class="domain-standards-banner" style="display:none;">
+          <div class="domain-badge-lead" id="domainBadgeLead">🛰️ Earth Observation Verified</div>
+          <div class="domain-checks-summary" id="domainChecksSummary"></div>
+        </div>
+
         <div class="table-action-strip">
           <input type="text" id="tableSearchInput" class="search-box-field" placeholder="🔍 Search records in table preview...">
           <span style="font-size: 0.82rem; color: var(--text-muted);">Previewing observations</span>
@@ -225,8 +230,20 @@
       <!-- VIEW 3: Croissant Metadata -->
       <div class="tab-view-panel" id="view-croissant">
         <div class="artifact-actions-row">
+          <div class="validation-badge-pill" id="croissantValidBadge">
+            <span class="validation-icon">✅</span>
+            <span class="validation-status-text">Validated: MLCommons Croissant v1.0 (0 Errors, 0 Warnings)</span>
+          </div>
           <button class="btn-secondary" onclick="copyCode('croissantViewer')">📋 Copy Croissant JSON-LD</button>
         </div>
+
+        <div class="validation-details-box" id="croissantValidationBox">
+          <div class="validation-checks-header">Independent Specification Checks:</div>
+          <div class="validation-checks-grid" id="croissantChecksGrid">
+            <!-- Dynamically populated checks -->
+          </div>
+        </div>
+
         <pre class="artifact-code-block" id="croissantViewer">// Compiling MLCommons Croissant metadata...</pre>
       </div>
 
@@ -249,19 +266,65 @@
       <!-- VIEW 6: RO-Crate & Deposit Guide -->
       <div class="tab-view-panel" id="view-rocrate">
         <div class="artifact-actions-row">
+          <div class="validation-badge-pill" id="roCrateValidBadge">
+            <span class="validation-icon">✅</span>
+            <span class="validation-status-text">Validated: RO-Crate v1.1 Specification (0 Errors, 0 Warnings)</span>
+          </div>
           <button class="btn-secondary" onclick="copyCode('roCrateViewer')">📋 Copy RO-Crate JSON</button>
         </div>
-        
-        <div style="background:var(--bg-warm-subtle); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:1.75rem; margin-bottom:1.5rem;">
-          <h3 style="font-family:var(--font-serif); color:var(--stew-copper); font-size:1.2rem; margin-bottom:0.75rem;">🏛️ Helmholtz Open Repository Deposit Guide</h3>
-          <p style="color:var(--text-secondary); font-size:0.92rem; margin-bottom:1rem; line-height:1.6;">
-            Because Stew generates certified <strong>RO-Crate v1.1</strong> and <strong>Croissant JSON-LD</strong> packages, you can deposit this dataset directly into:
-          </p>
-          <ul style="color:var(--text-secondary); font-size:0.88rem; padding-left:1.5rem; line-height:1.8;">
-            <li><strong>Rodare (HZDR)</strong> or <strong>TORE (FZJ)</strong>: InvenioRDM instances for Helmholtz research centers.</li>
-            <li><strong>Zenodo (CERN)</strong>: Drag & drop the exported ZIP archive to mint a permanent DOI.</li>
-            <li><strong>B2SHARE / EUDAT</strong>: European scientific data infrastructure.</li>
-          </ul>
+
+        <div class="validation-details-box" id="roCrateValidationBox">
+          <div class="validation-checks-header">Independent Specification Checks:</div>
+          <div class="validation-checks-grid" id="roCrateChecksGrid">
+            <!-- Dynamically populated checks -->
+          </div>
+        </div>
+
+        <!-- 1-Click Deposition Cockpit -->
+        <div class="deposit-action-card">
+          <div class="deposit-card-header">
+            <div class="deposit-icon">🏛️</div>
+            <div>
+              <h3 class="deposit-title">1-Click Open Repository Deposition &amp; DOI Pre-Reservation</h3>
+              <p class="deposit-subtitle">
+                Directly register a draft record, pre-reserve a permanent DOI, and synchronize Croissant JSON-LD &amp; RO-Crate v1.1 bundles into Helmholtz and European research data repositories.
+              </p>
+            </div>
+          </div>
+
+          <div class="deposit-form-grid">
+            <div class="input-block" style="margin-bottom:0;">
+              <label for="depositTargetRepo">Target Repository</label>
+              <select id="depositTargetRepo">
+                <option value="zenodo-sandbox">Zenodo Sandbox (Testing, CERN API)</option>
+                <option value="zenodo-prod">Zenodo Production (CERN)</option>
+                <option value="rodare">Rodare (HZDR InvenioRDM Instance)</option>
+                <option value="tore">TORE (FZJ InvenioRDM Instance)</option>
+              </select>
+            </div>
+
+            <div class="input-block" style="margin-bottom:0;">
+              <label for="depositAccessToken">
+                Personal Access Token
+                <span class="ephemeral-pill" title="Security &amp; Sovereign Guarantee">🔒 Ephemeral In-Memory</span>
+              </label>
+              <input type="password" id="depositAccessToken" placeholder="e.g. zenodo_pat_... or invenio_token_..." autocomplete="off">
+            </div>
+
+            <div style="display:flex; align-items:flex-end;">
+              <button class="btn-stew" id="btnExecuteDeposit" onclick="executeOneClickDeposit()" style="height:42px; width:100%; justify-content:center;">
+                🚀 Create Draft &amp; Pre-Reserve DOI
+              </button>
+            </div>
+          </div>
+
+          <div class="deposit-privacy-notice">
+            🛡️ <strong>Sovereign Privacy Guarantee:</strong> Your access credentials are used exclusively in ephemeral RAM during this REST request. Tokens are never persisted to disk, session files, or telemetry logs.
+          </div>
+
+          <div id="depositResultContainer" class="deposit-result-box" style="display:none;">
+            <!-- Dynamically populated after draft creation -->
+          </div>
         </div>
 
         <pre class="artifact-code-block" id="roCrateViewer">// Generating RO-Crate metadata...</pre>
@@ -300,6 +363,61 @@
       <button class="btn-stew" style="width:100%; justify-content:center; margin-top:0.75rem;" id="saveSettingsBtn">
         Save & Connect to Blablador
       </button>
+    </div>
+  </div>
+
+  <!-- Column Verification & Provenance Edit Modal -->
+  <div class="modal-overlay" id="columnConfirmModal">
+    <div class="modal-window" style="max-width: 580px;">
+      <div class="modal-head-row">
+        <div>
+          <h3>Verify Variable Metadata &amp; Provenance</h3>
+          <div style="font-size:0.85rem; color:var(--text-muted); margin-top:0.25rem;">
+            Confirm domain semantics, physical units, and AI suggestions for Croissant &amp; RO-Crate.
+          </div>
+        </div>
+        <button class="btn-secondary" id="closeColumnModalBtn" style="padding:0.25rem 0.5rem;">&times;</button>
+      </div>
+
+      <div class="input-block">
+        <label>Variable / Column Identifier</label>
+        <input type="text" id="modalColName" readonly style="background:var(--bg-warm-tint); font-family:var(--font-mono); font-weight:600;">
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="input-block">
+          <label>Data Type</label>
+          <input type="text" id="modalColType" readonly style="background:var(--bg-warm-tint); font-family:var(--font-mono);">
+        </div>
+        <div class="input-block">
+          <label>Physical Unit (UDUNITS / QUDT)</label>
+          <input type="text" id="modalColUnit" placeholder="e.g. m/s, degC, W m-2, dimensionless">
+        </div>
+      </div>
+
+      <div class="input-block">
+        <label>Variable Scientific Description</label>
+        <textarea id="modalColDesc" rows="3" style="width:100%; border:1px solid var(--border-strong); border-radius:var(--radius-sm); padding:0.7rem; font-family:var(--font-sans); font-size:0.9rem; outline:none; resize:vertical;" placeholder="Detailed variable definition..."></textarea>
+      </div>
+
+      <div class="input-block">
+        <label>Metadata Provenance &amp; Evidence</label>
+        <div id="modalColProvenanceBox" class="modal-provenance-info">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+
+      <div class="input-block">
+        <label>Steward / Researcher Verification Notes</label>
+        <input type="text" id="modalColNotes" placeholder="e.g. Checked against sensor calibration sheet or CF-1.8 standard">
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1.25rem;">
+        <button class="btn-secondary" id="cancelColumnModalBtn">Cancel</button>
+        <button class="btn-stew" id="submitColumnModalBtn">
+          ✓ Verify &amp; Confirm Variable
+        </button>
+      </div>
     </div>
   </div>
 

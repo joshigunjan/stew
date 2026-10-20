@@ -24,6 +24,10 @@ from clara.generators.dictionary import (
     generate_data_dictionary_csv
 )
 from clara.generators.ro_crate import generate_ro_crate_metadata
+from clara.validators.croissant import validate_croissant_jsonld
+from clara.validators.rocrate import validate_rocrate_json
+from clara.depositor.zenodo import create_zenodo_draft_deposition
+from clara.depositor.invenio import create_invenio_draft_deposition
 
 app = FastAPI(
     title="Stew: The Helmholtz Data Steward",
@@ -70,6 +74,19 @@ class UniversalImportRequest(BaseModel):
     url: Optional[str] = None
 
 ZenodoImportRequest = UniversalImportRequest
+
+class ColumnConfirmationRequest(BaseModel):
+    dataset_id: str
+    column_name: str
+    suggested_unit: Optional[str] = None
+    suggested_description: Optional[str] = None
+    user_notes: Optional[str] = None
+
+class DepositionRequest(BaseModel):
+    dataset_id: str
+    target_repository: str = "zenodo"
+    access_token: str
+    use_sandbox: bool = True
 
 @app.get("/", response_class=HTMLResponse)
 @app.get("/app", response_class=HTMLResponse)
@@ -217,7 +234,12 @@ async def get_croissant(dataset_id: str):
     if dataset_id not in DATASET_STORE:
         raise HTTPException(status_code=404, detail="Dataset not found")
     profile = DATASET_STORE[dataset_id]
-    return generate_croissant_metadata(profile)
+    croissant_data = generate_croissant_metadata(profile)
+    validation = validate_croissant_jsonld(croissant_data)
+    return {
+        "metadata": croissant_data,
+        "validation": validation
+    }
 
 @app.get("/api/dictionary/{dataset_id}")
 async def get_dictionary(dataset_id: str):
@@ -229,6 +251,73 @@ async def get_dictionary(dataset_id: str):
         "markdown": generate_data_dictionary_markdown(profile),
         "csv": generate_data_dictionary_csv(profile)
     }
+
+@app.post("/api/column/confirm")
+async def confirm_column(req: ColumnConfirmationRequest):
+    if req.dataset_id not in DATASET_STORE:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    profile = DATASET_STORE[req.dataset_id]
+    if req.column_name not in profile.columns:
+        raise HTTPException(status_code=404, detail=f"Column '{req.column_name}' not found")
+        
+    col = profile.columns[req.column_name]
+    if req.suggested_unit is not None:
+        col.suggested_unit = req.suggested_unit.strip()
+    if req.suggested_description is not None:
+        col.suggested_description = req.suggested_description.strip()
+    col.user_confirmed = True
+    col.provenance_type = "USER_VERIFIED"
+    col.confidence_score = 1.0
+    col.provenance_evidence = f"Researcher confirmed and approved: {req.user_notes or 'Direct approval'}"
+    
+    return {
+        "status": "confirmed",
+        "column": col.model_dump()
+    }
+
+@app.get("/api/domain-audit/{dataset_id}")
+async def get_domain_audit(dataset_id: str):
+    if dataset_id not in DATASET_STORE:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    profile = DATASET_STORE[dataset_id]
+    return profile.domain_standards or {}
+
+@app.post("/api/deposit")
+async def deposit_endpoint(req: DepositionRequest):
+    if req.dataset_id not in DATASET_STORE:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    if not req.access_token or len(req.access_token.strip()) < 5:
+        raise HTTPException(status_code=400, detail="Personal Access Token is required for repository deposition.")
+        
+    profile = DATASET_STORE[req.dataset_id]
+    croissant_doc = generate_croissant_metadata(profile)
+    crate_doc = generate_ro_crate_metadata(profile)
+    dict_md = generate_data_dictionary_markdown(profile)
+    
+    import json
+    files_bundle = {
+        "croissant.jsonld": json.dumps(croissant_doc, indent=2),
+        "ro-crate-metadata.json": json.dumps(crate_doc, indent=2),
+        "data_dictionary.md": dict_md
+    }
+    
+    try:
+        if req.target_repository.lower() == "zenodo":
+            result = create_zenodo_draft_deposition(
+                profile,
+                access_token=req.access_token,
+                use_sandbox=req.use_sandbox,
+                files_to_upload=files_bundle
+            )
+        else:
+            result = create_invenio_draft_deposition(
+                profile,
+                access_token=req.access_token,
+                repository=req.target_repository.lower()
+            )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @app.post("/api/article/{dataset_id}")
 async def get_article(dataset_id: str, notes: Optional[str] = Form("")):
@@ -244,7 +333,12 @@ async def get_ro_crate(dataset_id: str):
     if dataset_id not in DATASET_STORE:
         raise HTTPException(status_code=404, detail="Dataset not found")
     profile = DATASET_STORE[dataset_id]
-    return generate_ro_crate_metadata(profile)
+    crate_data = generate_ro_crate_metadata(profile)
+    validation = validate_rocrate_json(crate_data)
+    return {
+        "metadata": crate_data,
+        "validation": validation
+    }
 
 @app.get("/api/export/{dataset_id}")
 async def export_fair_package(dataset_id: str):

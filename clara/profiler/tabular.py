@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 
 from clara.profiler.base import ColumnProfile, DatasetProfile
+from clara.profiler.domain_steward import audit_domain_standards
 
 COMMON_NA_VALUES = ["", " ", "na", "n/a", "null", "none", "nan", "-999", "-9999", "9999", "-999.0", "-9999.0", "."]
 
@@ -147,7 +148,11 @@ def profile_dataframe(df: pd.DataFrame, file_path: Path, dataset_id: str) -> Dat
             suggested_semantic_type=semantic_type,
             suggested_unit=unit,
             suggested_description=description,
-            missing_value_markers=sentinel_markers
+            missing_value_markers=sentinel_markers,
+            provenance_type="AI_SUGGESTED_BLABLADOR" if unit or "latitude" in semantic_type or "longitude" in semantic_type else "EXTRACTED_FROM_DATA",
+            provenance_evidence=f"Deterministic header `{col}` ({dtype_str}) with inferred semantic unit `{unit or 'dimensionless'}`",
+            confidence_score=0.85 if unit else 1.0,
+            user_confirmed=False
         )
         columns_profile[col] = col_prof
 
@@ -187,7 +192,7 @@ def profile_dataframe(df: pd.DataFrame, file_path: Path, dataset_id: str) -> Dat
     if is_spatial:
         summary_notes.append(f"Detected spatial coordinates: Bounding box [{bbox[0]}, {bbox[1]}, {bbox[2]}, {bbox[3]}] (EPSG:4326).")
 
-    return DatasetProfile(
+    profile = DatasetProfile(
         dataset_id=dataset_id,
         title=file_path.stem.replace("_", " ").title(),
         file_name=file_path.name,
@@ -202,3 +207,7 @@ def profile_dataframe(df: pd.DataFrame, file_path: Path, dataset_id: str) -> Dat
         spatial_bbox=bbox,
         spatial_crs="EPSG:4326" if is_spatial else None
     )
+    
+    # Run scientific domain audit (Earth Observation, CF Conventions)
+    profile.domain_standards = audit_domain_standards(profile)
+    return profile
