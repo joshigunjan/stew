@@ -24,6 +24,16 @@ except Exception:
 
 os.environ["GRADIO_SSR_MODE"] = "False"
 
+# ZeroGPU handshake probe for Hugging Face Spaces
+try:
+    import spaces
+    @spaces.GPU(duration=10)
+    def zero_gpu_handshake():
+        return True
+    zero_gpu_handshake()
+except Exception:
+    pass
+
 import uvicorn
 import gradio as gr
 from clara.api.server import app as fastapi_app
