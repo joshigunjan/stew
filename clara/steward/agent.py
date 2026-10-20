@@ -49,7 +49,7 @@ class StewAgent:
             {"role": "system", "content": STEW_SYSTEM_PROMPT},
             {"role": "user", "content": prompt}
         ]
-        review_result = self.client.chat_completion(messages)
+        review_result = self.client.chat_completion(messages, profile=profile)
         
         fair_res = evaluate_fair_score(profile)
         profile.fair_score = fair_res["overall_score"]
@@ -72,7 +72,7 @@ class StewAgent:
         messages.extend(history)
         messages.append({"role": "user", "content": user_message})
         
-        reply = self.client.chat_completion(messages)
+        reply = self.client.chat_completion(messages, profile=profile)
         return reply
 
     def draft_data_article(self, profile: DatasetProfile, user_notes: str = "") -> str:
@@ -100,7 +100,7 @@ class StewAgent:
             {"role": "system", "content": STEW_SYSTEM_PROMPT},
             {"role": "user", "content": prompt}
         ]
-        return self.client.chat_completion(messages, temperature=0.2)
+        return self.client.chat_completion(messages, temperature=0.2, profile=profile)
 
 # Backwards compatibility alias
 ClaraAgent = StewAgent

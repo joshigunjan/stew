@@ -98,11 +98,13 @@ async def serve_index():
 
 @app.get("/api/status")
 async def get_status():
+    provider_name = getattr(steward_agent.client, "provider", "Helmholtz Blablador (JSC)")
     return {
-        "blablador_base_url": config.blablador_base_url,
-        "model": config.default_model,
+        "blablador_base_url": getattr(steward_agent.client, "base_url", config.blablador_base_url),
+        "model": getattr(steward_agent.client, "model", config.default_model),
         "is_configured": steward_agent.client.is_configured,
-        "service": "Helmholtz Blablador (Jülich Supercomputing Centre)"
+        "provider": provider_name,
+        "service": provider_name if steward_agent.client.is_configured else f"{provider_name} (Unconnected - Local Grounded Mode)"
     }
 
 @app.post("/api/settings")
@@ -114,8 +116,8 @@ async def update_settings(req: SettingsRequest):
     if req.base_url is not None:
         config.blablador_base_url = req.base_url.strip()
         
-    # Reinitialize steward
-    steward_agent.client = StewAgent().client.__class__(
+    from clara.steward.llm_client import BlabladorClient
+    steward_agent.client = BlabladorClient(
         api_key=config.blablador_api_key,
         base_url=config.blablador_base_url,
         model=config.default_model
@@ -123,7 +125,8 @@ async def update_settings(req: SettingsRequest):
     return {
         "status": "updated",
         "is_configured": steward_agent.client.is_configured,
-        "model": config.default_model
+        "model": getattr(steward_agent.client, "model", config.default_model),
+        "provider": getattr(steward_agent.client, "provider", "Helmholtz Blablador (JSC)")
     }
 
 @app.post("/api/upload")

@@ -338,20 +338,39 @@
   <div class="modal-overlay" id="settingsModal">
     <div class="modal-window">
       <div class="modal-head-row">
-        <h3>Helmholtz Blablador Settings</h3>
+        <div>
+          <h3>AI Data Steward Engine Settings</h3>
+          <div style="font-size:0.82rem; color:var(--text-muted); margin-top:0.2rem;">
+            Connect to live sovereign inference or run with Stew's grounded expert engine.
+          </div>
+        </div>
         <button class="btn-secondary" id="closeSettingsBtn" style="padding:0.25rem 0.5rem;">&times;</button>
       </div>
 
       <div class="input-block">
-        <label>Blablador Personal Access Token / API Key</label>
-        <input type="password" id="settingApiKey" placeholder="Your Helmholtz Codebase token">
-        <div class="input-note">
-          Obtain via Helmholtz Codebase (GitLab) &rarr; Preferences &rarr; Access Tokens.
-        </div>
+        <label>AI Service Provider</label>
+        <select id="settingProvider">
+          <option value="blablador">Helmholtz Blablador (JSC, Jülich Supercomputing Centre)</option>
+          <option value="huggingface">Hugging Face Serverless (Router API)</option>
+          <option value="openai">OpenAI / OpenRouter / Custom Endpoint</option>
+        </select>
       </div>
 
       <div class="input-block">
-        <label>Blablador Model Selector</label>
+        <label id="settingApiKeyLabel">Blablador Personal Access Token / API Key</label>
+        <input type="password" id="settingApiKey" placeholder="Your Helmholtz Codebase token">
+        <div class="input-note" id="settingApiKeyNote">
+          Obtain via Helmholtz Codebase (GitLab) &rarr; Preferences &rarr; Access Tokens (scopes: api).
+        </div>
+      </div>
+
+      <div class="input-block" id="settingBaseUrlBlock" style="display:none;">
+        <label>Base URL Endpoint</label>
+        <input type="text" id="settingBaseUrl" placeholder="https://api.helmholtz-blablador.fz-juelich.de/v1">
+      </div>
+
+      <div class="input-block">
+        <label>Model Selector</label>
         <select id="settingModel">
           <option value="alias-fast">alias-fast (Fast inference at JSC, recommended)</option>
           <option value="alias-code">alias-code (Optimized for schemas & code)</option>
@@ -360,8 +379,12 @@
         </select>
       </div>
 
-      <button class="btn-stew" style="width:100%; justify-content:center; margin-top:0.75rem;" id="saveSettingsBtn">
-        Save & Connect to Blablador
+      <div style="font-size:0.8rem; color:var(--text-secondary); background:var(--bg-warm-tint); padding:0.6rem 0.8rem; border-radius:var(--radius-xs); border:1px solid var(--border-subtle); margin-bottom:1rem;">
+        💡 <strong>Zero-Setup Offline Guarantee:</strong> Without an API key, Stew automatically runs its deterministic <em>Grounded Scientific Steward Engine</em>, calculating exact empirical bounds, CF-1.8 attributes, and QUDT units.
+      </div>
+
+      <button class="btn-stew" style="width:100%; justify-content:center;" id="saveSettingsBtn">
+        Save &amp; Connect AI Provider
       </button>
     </div>
   </div>

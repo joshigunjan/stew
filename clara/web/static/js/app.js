@@ -24,10 +24,10 @@ async function checkBackendStatus() {
         const dot = document.querySelector(".pulse-indicator");
         
         if (data.is_configured) {
-            indicator.textContent = `Blablador Connected (${data.model})`;
+            indicator.textContent = `${data.provider || "AI"} Connected (${data.model})`;
             dot.style.backgroundColor = "var(--stew-sage)";
         } else {
-            indicator.textContent = `Stew Local Mode (${data.model})`;
+            indicator.textContent = `Stew Grounded Engine (Ready)`;
             dot.style.backgroundColor = "var(--stew-copper)";
         }
     } catch (e) {
@@ -776,18 +776,66 @@ function initSettingsModal() {
     const openBtn = document.getElementById("openSettingsBtn");
     const closeBtn = document.getElementById("closeSettingsBtn");
     const saveBtn = document.getElementById("saveSettingsBtn");
+    const providerSelect = document.getElementById("settingProvider");
+    const apiKeyLabel = document.getElementById("settingApiKeyLabel");
+    const apiKeyInput = document.getElementById("settingApiKey");
+    const apiKeyNote = document.getElementById("settingApiKeyNote");
+    const baseUrlBlock = document.getElementById("settingBaseUrlBlock");
+    const baseUrlInput = document.getElementById("settingBaseUrl");
+    const modelSelect = document.getElementById("settingModel");
+
+    if (providerSelect) {
+        providerSelect.addEventListener("change", () => {
+            const val = providerSelect.value;
+            if (val === "blablador") {
+                apiKeyLabel.textContent = "Blablador Personal Access Token / API Key";
+                apiKeyInput.placeholder = "Your Helmholtz Codebase token";
+                apiKeyNote.textContent = "Obtain via Helmholtz Codebase (GitLab) → Preferences → Access Tokens (scopes: api).";
+                baseUrlBlock.style.display = "none";
+                baseUrlInput.value = "https://api.helmholtz-blablador.fz-juelich.de/v1";
+                modelSelect.innerHTML = `
+                    <option value="alias-fast">alias-fast (Fast inference at JSC, recommended)</option>
+                    <option value="alias-code">alias-code (Optimized for schemas & code)</option>
+                    <option value="llama3-70b-instruct">Llama 3 70B Instruct (JSC)</option>
+                    <option value="mistral-large">Mistral Large</option>
+                `;
+            } else if (val === "huggingface") {
+                apiKeyLabel.textContent = "Hugging Face User Access Token";
+                apiKeyInput.placeholder = "hf_... access token";
+                apiKeyNote.textContent = "Obtain via Hugging Face → Settings → Access Tokens (read scope).";
+                baseUrlBlock.style.display = "none";
+                baseUrlInput.value = "https://router.huggingface.co/v1";
+                modelSelect.innerHTML = `
+                    <option value="meta-llama/Llama-3.1-8B-Instruct">meta-llama/Llama-3.1-8B-Instruct (Recommended)</option>
+                    <option value="Qwen/Qwen2.5-72B-Instruct">Qwen/Qwen2.5-72B-Instruct</option>
+                    <option value="mistralai/Mistral-7B-Instruct-v0.3">mistralai/Mistral-7B-Instruct-v0.3</option>
+                `;
+            } else {
+                apiKeyLabel.textContent = "OpenAI / Custom API Key";
+                apiKeyInput.placeholder = "sk-...";
+                apiKeyNote.textContent = "Compatible with OpenAI, OpenRouter, Groq, or local Ollama.";
+                baseUrlBlock.style.display = "block";
+                baseUrlInput.value = "https://api.openai.com/v1";
+                modelSelect.innerHTML = `
+                    <option value="gpt-4o-mini">gpt-4o-mini</option>
+                    <option value="gpt-4o">gpt-4o</option>
+                `;
+            }
+        });
+    }
 
     openBtn.addEventListener("click", () => modal.classList.add("active"));
     closeBtn.addEventListener("click", () => modal.classList.remove("active"));
 
     saveBtn.addEventListener("click", async () => {
-        const apiKey = document.getElementById("settingApiKey").value;
+        const apiKey = document.getElementById("settingApiKey").value.trim();
         const model = document.getElementById("settingModel").value;
+        const baseUrl = document.getElementById("settingBaseUrl") ? document.getElementById("settingBaseUrl").value.trim() : null;
 
         await fetch("/api/settings", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ api_key: apiKey, model: model })
+            body: JSON.stringify({ api_key: apiKey, model: model, base_url: baseUrl })
         });
         modal.classList.remove("active");
         checkBackendStatus();
