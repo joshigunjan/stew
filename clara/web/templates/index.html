@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stew: The Helmholtz Data Steward</title>
+  <meta name="description" content="Stew is your sovereign open-science AI Data Steward. Profile, standardize, and transform heterogeneous research datasets and Zenodo DOIs into certified MLCommons Croissant and RO-Crate packages without publisher lock-in.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="brand-wrapper">
+      <div class="stew-pot-badge">🍲</div>
+      <div class="brand-meta">
+        <h1>Stew <span class="helmholtz-pill">The Helmholtz Data Steward</span></h1>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <div class="status-pill">
+        <div class="pulse-indicator"></div>
+        <span id="statusIndicatorText">Checking Blablador...</span>
+      </div>
+      <button class="btn-secondary" id="openSettingsBtn">
+        ⚙️ LLM Settings
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-wrapper">
+
+    <!-- Hero Section: Data Intake & Profiling -->
+    <section class="hero-pot-card" id="intakeHeroSection">
+      <div class="hero-intro">
+        <div class="hero-pot-icon">🍲</div>
+        <h2 class="hero-title">Automated AI Data Stewardship for Research Data.</h2>
+        <p class="hero-subtitle">
+          Meet <strong>Stew</strong>, your sovereign AI Data Steward for the Helmholtz Association. Ingest a <strong>Zenodo DOI</strong>, 
+          open web directory, or raw research files, and Stew will profile, standardize, and package them into certified <strong>MLCommons Croissant</strong>, 
+          standardized <strong>Data Dictionaries</strong>, and <strong>RO-Crate</strong> archives for open scientific reuse.
+        </p>
+      </div>
+
+      <!-- Pot Modes Switcher -->
+      <div class="pot-modes-nav">
+        <button class="pot-mode-btn active" data-mode="zenodo">
+          🌐 Any URL / DOI / Web Directory
+        </button>
+        <button class="pot-mode-btn" data-mode="upload">
+          📁 Local Files (Any Scientific Format)
+        </button>
+        <button class="pot-mode-btn" data-mode="samples">
+          🧪 Reference Datasets
+        </button>
+      </div>
+
+      <!-- Mode 1: Universal URL / DOI / Web Directory Import -->
+      <div class="intake-panel active" id="panel-zenodo">
+        <div class="pot-input-box">
+          <input type="text" id="zenodoInput" class="pot-input" placeholder="Paste Zenodo DOI, Jülich datapub URL, or direct data link (CSV, HDF5, NetCDF, Parquet)...">
+          <button class="btn-stew" id="zenodoIngestBtn">
+            🔬 Profile & Audit with Stew
+          </button>
+        </div>
+
+        <div class="preset-strip">
+          <span>Try real Helmholtz & Open Science datasets:</span>
+          <button class="preset-chip-btn" onclick="setZenodoInput('https://datapub.fz-juelich.de/biomazon/hls-mgrs_aligned_tiles/')">
+            🌿 Jülich: Biomazon Earth Observation (HDF5 Collection)
+          </button>
+          <button class="preset-chip-btn" onclick="setZenodoInput('10.5281/zenodo.15008662')">
+            🌦️ Zenodo: Radar Hailstorm Tracks (CSV)
+          </button>
+          <button class="preset-chip-btn" onclick="setZenodoInput('10.5281/zenodo.18245429')">
+            ✈️ Zenodo: Aviation Contrail Scenarios (ZIP/Excel)
+          </button>
+        </div>
+      </div>
+
+      <!-- Mode 2: Local Upload (Any Format) -->
+      <div class="intake-panel" id="panel-upload">
+        <div class="pot-drop-zone" id="dropZone">
+          <div style="font-size: 2.75rem; margin-bottom: 0.5rem;">📥</div>
+          <div style="font-weight: 700; color: var(--text-main); font-size: 1.1rem; font-family: var(--font-serif);">Drop any scientific data format here</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Supports CSV, TSV, Parquet, HDF5 (.h5/.hdf5), NetCDF (.nc), Excel (.xlsx), GeoTIFF (.tif), GeoJSON, and Archives (.zip, .tar.gz)</div>
+          <input type="file" id="fileInput" style="display:none;" accept=".csv,.tsv,.parquet,.h5,.hdf5,.he5,.nc,.netcdf,.xlsx,.xls,.tif,.tiff,.geojson,.json,.zip,.tar,.gz,.txt">
+        </div>
+      </div>
+
+      <!-- Mode 3: Built-in Samples -->
+      <div class="intake-panel" id="panel-samples">
+        <div style="display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; padding: 0.5rem 0;">
+          <button class="btn-secondary" style="padding: 1rem 1.5rem; font-size: 0.95rem;" onclick="loadSample('climate_sensors.csv')">
+            ⛅ Climate Sensors (CSV with -999 Sentinels)
+          </button>
+          <button class="btn-secondary" style="padding: 1rem 1.5rem; font-size: 0.95rem;" onclick="loadSample('earth_observation_stations.geojson')">
+            🌍 Earth Observation Stations (GeoJSON)
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Dashboard Kitchen Section (Active when dataset loaded) -->
+    <section class="dashboard-kitchen" id="dashboardCockpit">
+
+      <!-- Kitchen Banner -->
+      <div class="kitchen-banner">
+        <div class="banner-lead">
+          <div class="stew-avatar-icon">🍲</div>
+          <div>
+            <h2 class="dataset-title" id="datasetTitle">Dataset Name</h2>
+            <div class="tag-row">
+              <span id="datasetFileName" style="color:var(--text-muted); font-size:0.8rem; font-family:var(--font-mono);">data.csv</span>
+              <span class="pill-tag tag-format" id="badgeFormat">CSV</span>
+              <a href="#" target="_blank" class="pill-tag tag-doi" id="badgeDoi" style="display:none;">DOI</a>
+              <span class="pill-tag tag-spatial" id="badgeSpatial" style="display:none;">Geospatial</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dataset-counters">
+          <div class="counter-item">
+            <div class="counter-label">Observations</div>
+            <div class="counter-value" id="statRows">0</div>
+          </div>
+          <div class="counter-item">
+            <div class="counter-label">Variables</div>
+            <div class="counter-value" id="statCols">0</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; align-items: center;">
+          <div class="fair-quality-card" title="FAIR² & AI-Readiness Compliance Assessment">
+            <div class="fair-big-num" id="fairScoreNum">93</div>
+            <div class="fair-meta-col">
+              <div class="fair-title-label">FAIR² Compliance Index</div>
+              <div class="fair-grade-text" id="fairGradeBadge">A (AI-Ready)</div>
+              <div class="fair-breakdown-row" id="fairBreakdown">
+                <span class="fair-dim" id="dimF" title="Findability Score (max 25)">F: 25</span>
+                <span class="fair-dot">&bull;</span>
+                <span class="fair-dim" id="dimA" title="Accessibility Score (max 25)">A: 25</span>
+                <span class="fair-dot">&bull;</span>
+                <span class="fair-dim" id="dimI" title="Interoperability Score (max 25)">I: 25</span>
+                <span class="fair-dot">&bull;</span>
+                <span class="fair-dim" id="dimR" title="Reusability Score (max 25)">R: 18</span>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-stew" onclick="downloadFairPackage()">
+            📦 Download FAIR Package (.zip)
+          </button>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="kitchen-tabs-nav">
+        <button class="kitchen-tab-btn active" data-tab="explorer">📊 Data Explorer & Schema</button>
+        <button class="kitchen-tab-btn" data-tab="steward">🍲 Stew AI Stewardship & Audit</button>
+        <button class="kitchen-tab-btn" data-tab="croissant">🥐 MLCommons Croissant</button>
+        <button class="kitchen-tab-btn" data-tab="dictionary">📖 Data Dictionary</button>
+        <button class="kitchen-tab-btn" data-tab="article">📝 FAIR Data Article</button>
+        <button class="kitchen-tab-btn" data-tab="rocrate">📦 RO-Crate & Deposit Guide</button>
+      </nav>
+
+      <!-- VIEW 1: Data Explorer -->
+      <div class="tab-view-panel active" id="view-explorer">
+        <div class="table-action-strip">
+          <input type="text" id="tableSearchInput" class="search-box-field" placeholder="🔍 Search records in table preview...">
+          <span style="font-size: 0.82rem; color: var(--text-muted);">Previewing observations</span>
+        </div>
+
+        <div class="data-table-frame">
+          <table class="scientific-table">
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="columns-deck" id="columnsDeck">
+          <!-- Populated dynamically with column distribution cards -->
+        </div>
+      </div>
+
+      <!-- VIEW 2: Stew AI Steward Chat -->
+      <div class="tab-view-panel" id="view-steward">
+        <div class="stew-chat-layout">
+          
+          <div class="stew-chat-card">
+            <div class="chat-thread" id="chatFlow">
+              <!-- Rendered messages -->
+            </div>
+            <div class="chat-input-bar">
+              <input type="text" id="chatInputField" class="chat-input-field" placeholder="Ask Stew about variable units, missing codes, or metadata standardization...">
+              <button class="btn-stew" id="chatSendBtn">Send</button>
+            </div>
+          </div>
+
+          <div class="stew-recipe-checklist">
+            <h4 style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">FAIR Stewardship Audit Checklist</h4>
+            <button class="recipe-prompt-btn" onclick="quickPrompt('Are there any missing or sentinel values like -999 in this dataset?')">
+              🔍 Audit Sentinels & Missing Values (-999)
+            </button>
+            <button class="recipe-prompt-btn" onclick="quickPrompt('Verify and standardize the physical units (QUDT) for all numerical columns.')">
+              📏 Standardize Physical Units (QUDT)
+            </button>
+            <button class="recipe-prompt-btn" onclick="quickPrompt('How AI-ready is this dataset for PyTorch, Hugging Face, and ML workflows?')">
+              🤖 Evaluate AI & ML Readiness
+            </button>
+            <button class="recipe-prompt-btn" onclick="quickPrompt('Draft a concise methodology and data acquisition protocol summary.')">
+              📋 Suggest Acquisition Protocol
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- VIEW 3: Croissant Metadata -->
+      <div class="tab-view-panel" id="view-croissant">
+        <div class="artifact-actions-row">
+          <button class="btn-secondary" onclick="copyCode('croissantViewer')">📋 Copy Croissant JSON-LD</button>
+        </div>
+        <pre class="artifact-code-block" id="croissantViewer">// Compiling MLCommons Croissant metadata...</pre>
+      </div>
+
+      <!-- VIEW 4: Data Dictionary -->
+      <div class="tab-view-panel" id="view-dictionary">
+        <div class="artifact-actions-row">
+          <button class="btn-secondary" onclick="copyCode('dictionaryViewer')">📋 Copy Markdown Dictionary</button>
+        </div>
+        <pre class="artifact-code-block" id="dictionaryViewer">// Compiling Data Dictionary...</pre>
+      </div>
+
+      <!-- VIEW 5: FAIR Data Article -->
+      <div class="tab-view-panel" id="view-article">
+        <div class="artifact-actions-row">
+          <button class="btn-secondary" onclick="copyCode('articleViewer')">📋 Copy Data Paper Markdown</button>
+        </div>
+        <pre class="artifact-code-block" id="articleViewer">// Drafting Data Paper with Stew...</pre>
+      </div>
+
+      <!-- VIEW 6: RO-Crate & Deposit Guide -->
+      <div class="tab-view-panel" id="view-rocrate">
+        <div class="artifact-actions-row">
+          <button class="btn-secondary" onclick="copyCode('roCrateViewer')">📋 Copy RO-Crate JSON</button>
+        </div>
+        
+        <div style="background:var(--bg-warm-subtle); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:1.75rem; margin-bottom:1.5rem;">
+          <h3 style="font-family:var(--font-serif); color:var(--stew-copper); font-size:1.2rem; margin-bottom:0.75rem;">🏛️ Helmholtz Open Repository Deposit Guide</h3>
+          <p style="color:var(--text-secondary); font-size:0.92rem; margin-bottom:1rem; line-height:1.6;">
+            Because Stew generates certified <strong>RO-Crate v1.1</strong> and <strong>Croissant JSON-LD</strong> packages, you can deposit this dataset directly into:
+          </p>
+          <ul style="color:var(--text-secondary); font-size:0.88rem; padding-left:1.5rem; line-height:1.8;">
+            <li><strong>Rodare (HZDR)</strong> or <strong>TORE (FZJ)</strong>: InvenioRDM instances for Helmholtz research centers.</li>
+            <li><strong>Zenodo (CERN)</strong>: Drag & drop the exported ZIP archive to mint a permanent DOI.</li>
+            <li><strong>B2SHARE / EUDAT</strong>: European scientific data infrastructure.</li>
+          </ul>
+        </div>
+
+        <pre class="artifact-code-block" id="roCrateViewer">// Generating RO-Crate metadata...</pre>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-window">
+      <div class="modal-head-row">
+        <h3>Helmholtz Blablador Settings</h3>
+        <button class="btn-secondary" id="closeSettingsBtn" style="padding:0.25rem 0.5rem;">&times;</button>
+      </div>
+
+      <div class="input-block">
+        <label>Blablador Personal Access Token / API Key</label>
+        <input type="password" id="settingApiKey" placeholder="Your Helmholtz Codebase token">
+        <div class="input-note">
+          Obtain via Helmholtz Codebase (GitLab) &rarr; Preferences &rarr; Access Tokens.
+        </div>
+      </div>
+
+      <div class="input-block">
+        <label>Blablador Model Selector</label>
+        <select id="settingModel">
+          <option value="alias-fast">alias-fast (Fast inference at JSC, recommended)</option>
+          <option value="alias-code">alias-code (Optimized for schemas & code)</option>
+          <option value="llama3-70b-instruct">Llama 3 70B Instruct (JSC)</option>
+          <option value="mistral-large">Mistral Large</option>
+        </select>
+      </div>
+
+      <button class="btn-stew" style="width:100%; justify-content:center; margin-top:0.75rem;" id="saveSettingsBtn">
+        Save & Connect to Blablador
+      </button>
+    </div>
+  </div>
+
+  <!-- Dataset Profiling & Stewardship Loading Overlay -->
+  <div class="modal-overlay" id="loadingOverlay">
+    <div class="loading-simmer-box">
+      <div class="simmer-icon">🍲</div>
+      <div id="loadingText" style="color:var(--text-main); font-weight:700; font-size:1.15rem; font-family:var(--font-serif);">Stew is profiling dataset metadata & assessing FAIR compliance...</div>
+      <div style="font-size:0.85rem; color:var(--text-muted); margin-top:0.35rem;">Computing empirical distributions, verifying physical units & compiling Croissant schemas</div>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

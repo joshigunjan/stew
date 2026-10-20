@@ -1,0 +1,66 @@
+{
+  "type": "FeatureCollection",
+  "name": "Helmholtz Earth Observation Monitoring Stations",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "station_id": "KIT-01",
+        "name": "Karlsruhe Flux Tower",
+        "elevation_m": 115.0,
+        "operator": "Karlsruhe Institute of Technology (KIT)",
+        "sensor_suite": "EddyCovariance_SonicAnemometer",
+        "status": "active"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [8.4037, 49.0069]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station_id": "FZJ-02",
+        "name": "Jülich Terrestrial Observatory",
+        "elevation_m": 92.5,
+        "operator": "Forschungszentrum Jülich (FZJ)",
+        "sensor_suite": "SoilNet_Lysimeter_CO2",
+        "status": "active"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [6.4132, 50.9039]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station_id": "GFZ-03",
+        "name": "Potsdam Geodetic Observatory",
+        "elevation_m": 88.0,
+        "operator": "Helmholtz Centre Potsdam (GFZ)",
+        "sensor_suite": "GNSS_Gravimetry_Seismic",
+        "status": "active"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [13.0644, 52.3809]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station_id": "UFZ-04",
+        "name": "Leipzig Environmental Observatory",
+        "elevation_m": 118.0,
+        "operator": "Helmholtz Centre for Environmental Research (UFZ)",
+        "sensor_suite": "CosmicRayNeutron_SoilMoisture",
+        "status": "active"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [12.4326, 51.3533]
+      }
+    }
+  ]
+}
